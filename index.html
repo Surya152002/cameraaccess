@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Video Call</title>
+</head>
+<body>
+  <h1>Video Call</h1>
+  
+  <video id="localVideo" autoplay></video>
+  <video id="remoteVideo" autoplay></video>
+  
+  <script>
+    // Get the local video element
+    const localVideo = document.getElementById('localVideo');
+    
+    // Get the remote video element
+    const remoteVideo = document.getElementById('remoteVideo');
+    
+    // Get the user's media
+    navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true
+    })
+    .then(stream => {
+      // Display the local video stream
+      localVideo.srcObject = stream;
+      
+      // Create a peer connection
+      const pc = new RTCPeerConnection();
+      
+      // Add the local stream to the peer connection
+      stream.getTracks().forEach(track => {
+        pc.addTrack(track, stream);
+      });
+      
+      // Create an offer
+      pc.createOffer()
+      .then(offer => {
+        return pc.setLocalDescription(offer);
+      })
+      .then(() => {
+        // Send the offer to the remote peer
+        // (replace with your own signaling mechanism)
+        fetch('/offer', {
+          method: 'POST',
+          body: JSON.stringify(pc.localDescription),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+      });
+      
+      // Handle the remote stream
+      pc.addEventListener('track', event => {
+        remoteVideo.srcObject = event.streams[0];
+      });
+    })
+    .catch(error => {
+      console.error('Error accessing media devices:', error);
+    });
+  </script>
+</body>
+</html>
