@@ -9,6 +9,10 @@
   <video id="localVideo" autoplay></video>
   <video id="remoteVideo" autoplay></video>
   
+  <button id="generateQRButton">Generate QR Code</button>
+  <div id="qrCode"></div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@8.0.0/dist/qrcode.min.js"></script>
   <script>
     // Get the local video element
     const localVideo = document.getElementById('localVideo');
@@ -42,7 +46,13 @@
         // Display the received data as video stream
         remoteVideo.srcObject = data;
       };
-      
+    })
+    .catch(error => {
+      console.error('Error accessing media devices:', error);
+    });
+    
+    // Generate the QR code when the button is clicked
+    document.getElementById('generateQRButton').addEventListener('click', () => {
       // Create an offer
       pc.createOffer()
       .then(offer => {
@@ -62,17 +72,7 @@
         // Display the QR code
         document.getElementById('qrCode').innerHTML = qrCode.toString();
       });
-      
-      // Handle the remote stream
-      pc.addEventListener('track', event => {
-        remoteVideo.srcObject = event.streams[0];
-      });
-    })
-    .catch(error => {
-      console.error('Error accessing media devices:', error);
     });
   </script>
-  
-  <div id="qrCode"></div>
 </body>
 </html>
