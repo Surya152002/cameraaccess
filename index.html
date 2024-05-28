@@ -40,7 +40,7 @@
       dataChannel.onmessage = event => {
         const data = event.data;
         // Display the received data as video stream
-        remoteVideo.src = URL.createObjectURL(data);
+        remoteVideo.srcObject = data;
       };
       
       // Create an offer
@@ -49,15 +49,18 @@
         return pc.setLocalDescription(offer);
       })
       .then(() => {
-        // Send the offer to the remote peer
-        // (replace with your own signaling mechanism)
-        fetch('/offer', {
-          method: 'POST',
-          body: JSON.stringify(pc.localDescription),
-          headers: {
-            'Content-Type': 'application/json'
-          }
+        // Generate a QR code for the offer
+        const qrCode = new QRCode('qrCode', {
+          text: JSON.stringify(pc.localDescription),
+          width: 200,
+          height: 200,
+          colorDark: '#000000',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.H
         });
+        
+        // Display the QR code
+        document.getElementById('qrCode').innerHTML = qrCode.toString();
       });
       
       // Handle the remote stream
@@ -69,5 +72,7 @@
       console.error('Error accessing media devices:', error);
     });
   </script>
+  
+  <div id="qrCode"></div>
 </body>
 </html>
