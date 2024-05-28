@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Video Call</title>
+  <title>Video Streaming</title>
 </head>
 <body>
-  <h1>Video Call</h1>
+  <h1>Video Streaming</h1>
   
   <video id="localVideo" autoplay></video>
   <video id="remoteVideo" autoplay></video>
@@ -16,6 +16,9 @@
     // Get the remote video element
     const remoteVideo = document.getElementById('remoteVideo');
     
+    // Create a peer connection
+    const pc = new RTCPeerConnection();
+    
     // Get the user's media
     navigator.mediaDevices.getUserMedia({
       video: true,
@@ -25,13 +28,20 @@
       // Display the local video stream
       localVideo.srcObject = stream;
       
-      // Create a peer connection
-      const pc = new RTCPeerConnection();
-      
       // Add the local stream to the peer connection
       stream.getTracks().forEach(track => {
         pc.addTrack(track, stream);
       });
+      
+      // Set up the data channel for streaming
+      const dataChannel = pc.createDataChannel('stream');
+      
+      // Handle incoming data channel messages
+      dataChannel.onmessage = event => {
+        const data = event.data;
+        // Display the received data as video stream
+        remoteVideo.src = URL.createObjectURL(data);
+      };
       
       // Create an offer
       pc.createOffer()
