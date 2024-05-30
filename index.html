@@ -1,92 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Scanner</title>
+    <title>Scan QR Codes</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            box-sizing: border-box;
-            text-align: center;
-            background: rgb(128, 0, 0, 66%);
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
         }
 
-        .container {
-            width: 100%;
-            max-width: 500px;
-            margin: 5px;
-        }
-
-        .container h1 {
-            color: #ffffff;
-        }
-
-        .section {
-            background-color: #ffffff;
-            padding: 50px 30px;
-            border: 1.5px solid #b2b2b2;
-            border-radius: 0.25em;
-            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.25);
-        }
-
-        #my-qr-reader {
-            padding: 20px !important;
-            border: 1.5px solid #b2b2b2 !important;
-            border-radius: 8px;
-        }
-
-        #my-qr-reader img[alt="Info icon"] {
-            display: none;
-        }
-
-        #my-qr-reader img[alt="Camera based scan"] {
-            width: 100px !important;
-            height: 100px !important;
-        }
-
-        button {
-            padding: 10px 20px;
-            border: 1px solid #b2b2b2;
-            outline: none;
-            border-radius: 0.25em;
+        .navbar a {
+            float: left;
             color: white;
-            font-size: 15px;
-            cursor: pointer;
-            margin-top: 15px;
-            margin-bottom: 10px;
-            background-color: #008000ad;
-            transition: 0.3s background-color;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
         }
 
-        button:hover {
-            background-color: #008000;
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
         }
 
-        #html5-qrcode-anchor-scan-type-change {
-            text-decoration: none !important;
-            color: #1d9bf0;
+        .navbar a.active {
+            background-color: #4CAF50;
+            color: white;
         }
 
-        video {
-            width: 100% !important;
-            border: 1px solid #b2b2b2 !important;
-            border-radius: 0.25em;
+        .qr-code-icon {
+            font-size: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="navbar">
+        <a href="#" class="active">Home</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+        <a href="#" id="qr-code-btn" class="qr-code-icon">&#x1F4F7;</a>
+    </div>
+
+    <div class="container" id="qr-code-container" style="display: none;">
         <h1>Scan QR Codes</h1>
         <div class="section">
             <div id="my-qr-reader"></div>
             <div id="scanned-results"></div>
         </div>
     </div>
+
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script>
         let scannedLinks = [];
@@ -100,12 +60,19 @@
         }
 
         domReady(function() {
-            const htmlscanner = new Html5QrcodeScanner("my-qr-reader", {
-                fps: 10,
-                qrbos: 250
-            });
+            const qrCodeBtn = document.getElementById("qr-code-btn");
+            const qrCodeContainer = document.getElementById("qr-code-container");
 
-            htmlscanner.render(onScanSuccess);
+            qrCodeBtn.addEventListener("click", function() {
+                qrCodeContainer.style.display = "block";
+
+                const htmlscanner = new Html5QrcodeScanner("my-qr-reader", {
+                    fps: 10,
+                    qrbos: 250
+                });
+
+                htmlscanner.render(onScanSuccess);
+            });
 
             function onScanSuccess(decodeText, decodeResult) {
                 const lastPartOfLink = decodeText.split("/").pop();
