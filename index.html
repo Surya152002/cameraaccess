@@ -109,17 +109,18 @@
 
             function onScanSuccess(decodeText, decodeResult) {
                 if (!scannedLinks.includes(decodeText)) {
+                    const lastPartOfLink = decodeText.split("/").pop();
                     scannedLinks.push(decodeText);
-                    displayScannedLinks();
+                    displayScannedLinks(lastPartOfLink);
                 }
             }
 
-            function displayScannedLinks() {
+            function displayScannedLinks(lastPartOfLink) {
                 const scannedResultsElement = document.getElementById("scanned-results");
                 scannedResultsElement.innerHTML = "";
                 scannedLinks.forEach((link, index) => {
                     const linkElement = document.createElement("p");
-                    linkElement.textContent = `Scan ${index + 1}: ${link}`;
+                    linkElement.textContent = `Scan ${index + 1}: ${lastPartOfLink}`;
                     scannedResultsElement.appendChild(linkElement);
                 });
             }
