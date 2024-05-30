@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .navbar {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .navbar-nav {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        
+        .nav-item {
+            margin-left: 20px;
+        }
+        
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        
+        .nav-link i {
+            font-size: 20px;
+        }
+        
+        .section {
+            margin-top: 40px;
+        }
+        
+        #saved-links {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">Dashboard</div>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <div class="section">
+            <div id="saved-links"></div>
+        </div>
+    </div>
+    
+    <script>
+        let savedLinks = JSON.parse(localStorage.getItem("scannedLinks")) || [];
+        let savedLinksElement = document.getElementById("saved-links");
+        
+        savedLinks.forEach((link) => {
+            const linkElement = document.createElement("p");
+            if (link.startsWith("N")) {
+                linkElement.style.color = "green";
+            } else if (link.startsWith("P")) {
+                linkElement.style.color = "red";
+            }
+            linkElement.textContent = link;
+            savedLinksElement.appendChild(linkElement);
+        });
+    </script>
+</body>
+</html>
