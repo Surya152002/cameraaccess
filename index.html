@@ -60,6 +60,16 @@
         #my-qr-reader, #scanned-results {
             text-align: center;
         }
+        
+        #next-btn {
+            display: block;
+            margin: 20px auto;
+        }
+        
+        #saved-links {
+            text-align: center;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -77,13 +87,17 @@
     <div class="container">
         <div class="section">
             <div id="my-qr-reader" style="display: none;"></div>
+            <button id="next-btn" style="display: none;">Next</button>
             <div id="scanned-results"></div>
         </div>
+        <div id="saved-links"></div>
     </div>
     
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script>
         let scannedLinks = [];
+        let nextBtn = document.getElementById("next-btn");
+        let savedLinksElement = document.getElementById("saved-links");
         
         function domReady(fn) {
             if (document.readyState === "complete" || document.readyState === "interactive") {
@@ -99,6 +113,7 @@
             
             qrCodeBtn.addEventListener("click", function() {
                 myQrReader.style.display = "block";
+                nextBtn.style.display = "block";
                 
                 const htmlscanner = new Html5QrcodeScanner("my-qr-reader", {
                     fps: 10,
@@ -112,17 +127,24 @@
                 const lastPartOfLink = decodeText.split("/").pop();
                 if (!scannedLinks.includes(lastPartOfLink)) {
                     scannedLinks.push(lastPartOfLink);
-                    displayScannedLinks();
                 }
             }
             
+            nextBtn.addEventListener("click", function() {
+                displayScannedLinks();
+            });
+            
             function displayScannedLinks() {
-                const scannedResultsElement = document.getElementById("scanned-results");
-                scannedResultsElement.innerHTML = "";
-                scannedLinks.forEach((link, index) => {
+                savedLinksElement.innerHTML = "";
+                scannedLinks.forEach((link) => {
                     const linkElement = document.createElement("p");
-                    linkElement.textContent = `Scan ${index + 1}: ${link}`;
-                    scannedResultsElement.appendChild(linkElement);
+                    if (link.startsWith("N")) {
+                        linkElement.style.color = "green";
+                    } else if (link.startsWith("P")) {
+                        linkElement.style.color = "red";
+                    }
+                    linkElement.textContent = link;
+                    savedLinksElement.appendChild(linkElement);
                 });
             }
         });
