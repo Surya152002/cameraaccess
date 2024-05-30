@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        
+        .navbar {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 20px;
+        }
+        
+        .navbar-nav {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        
+        .nav-item {
+            margin-left: 20px;
+        }
+        
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        
+        .nav-link i {
+            font-size: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            padding-top: 25px;
+            height: 0;
+        }
+        
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .button {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .button:hover {
+            background-color: #444;
+        }
+        
+        .info-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #666;
+        }
+        
+        .info-popup {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .info-popup ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .info-popup li {
+            margin-bottom: 5px;
+        }
+        
+        .info-popup li::before {
+            content: '\2022';
+            font-weight: bold;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">Dashboard</div>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <div class="video-container">
+            <video id="cameraFeed" autoplay playsinline></video>
+            <button id="fullScreenButton" onclick="toggleFullScreen()">Full Screen</button>
+        </div>
+        
+        <div class="button-container">
+            <!-- Buttons will be dynamically generated here -->
+        </div>
+    </div>
+    
+    <div class="info-icon" onclick="toggleInfoPopup()">
+        <i class="fas fa-info-circle"></i>
+    </div>
+    
+    <div class="info-popup" id="infoPopup">
+        <ul>
+            <li>7 negative values and 1 positive value</li>
+            <li>Values are shuffled based on the checked checkboxes</li>
+            <li>Only one positive value is allowed</li>
+            <li>No repetition after shuffled</li>
+            <li>Shuffled based on the positive will not be next to the previously located place in a row</li>
+        </ul>
+    </div>
+    
+    <script>
+        function toggleInfoPopup() {
+            const infoPopup = document.getElementById('infoPopup');
+            infoPopup.style.display = infoPopup.style.display === 'block' ? 'none' : 'block';
+        }
+        
+        const buttons = document.querySelectorAll('.button');
+        const scannedLinks = JSON.parse(localStorage.getItem('scannedLinks'));
+        
+        // Randomly select 8 values from the scanned links
+        const randomLinks = [];
+        for (let i = 0; i < 8; i++) {
+            const randomIndex = Math.floor(Math.random() * scannedLinks.length);
+            randomLinks.push(scannedLinks[randomIndex]);
+            scannedLinks.splice(randomIndex, 1);
+        }
+        
+        // Generate buttons with the random links
+        randomLinks.forEach((link) => {
+            const button = document.createElement('button');
+            button.textContent = link;
+            button.classList.add('button');
+            document.querySelector('.button-container').appendChild(button);
+        });
+        
+        // Function to read CSV file and display the corresponding row in a pop-up
+        function readCSVFile() {
+            const csvFile = 'data.csv';
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const csvData = e.target.result;
+                const rows = csvData.split('\n');
+                const headers = rows[0].split(',');
+                const data = rows.slice(1).map(row => row.split(','));
+                const input = document.getElementById('searchInput');
+                const searchValue = input.value;
+                const result = data.find(row => row[0] === searchValue);
+                if (result) {
+                    const popup = document.getElementById('popup');
+                    popup.style.display = 'block';
+                    popup.innerHTML = `
+                        <h2>${headers[1]}: ${result[1]}</h2>
+                        <button onclick="closePopup()">Close</button>
+                    `;
+                } else {
+                    alert('No matching value found');
+                }
+            };
+            reader.readAsText(csvFile);
+        }
+        
+        // Function to close the pop-up
+        function closePopup() {
+            const popup = document.getElementById('popup');
+            popup.style.display = 'none';
+        }
+        
+        // Function to change the color of the button based on the value
+        function changeButtonColor() {
+            const buttons = document.querySelectorAll('.button');
+            buttons.forEach((button) => {
+                if (button.textContent.startsWith('N')) {
+                    button.style.backgroundColor = 'green';
+                } else if (button.textContent.startsWith('P')) {
+                    button.style.backgroundColor = 'red';
+                }
+            });
+        }
+        
+        // Call the function to change the color of the buttons
+        changeButtonColor();
+        
+        // Function to handle button click
+        buttons.forEach((button) => {
+            button.onclick = function() {
+                const value = button.textContent;
+                document.getElementById('searchInput').value = value;
+                readCSVFile();
+            };
+        });
+        
+        // Function to handle nav-link click
+        const navLink = document.querySelector('.nav-link');
+        navLink.onclick = function() {
+            window.location.href = 'index.html';
+        };
+    </script>
+    
+    <input id="searchInput" type="text" placeholder="Enter unique_id">
+    <div id="popup" style="display: none;">
+        <!-- Pop-up content will be displayed here -->
+    </div>
+</body>
+</html>
