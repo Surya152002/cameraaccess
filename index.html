@@ -108,8 +108,9 @@
             htmlscanner.render(onScanSuccess);
 
             function onScanSuccess(decodeText, decodeResult) {
-                if (!scannedLinks.includes(decodeText)) {
-                    scannedLinks.push(decodeText);
+                const lastPartOfLink = decodeText.split("/").pop();
+                if (!scannedLinks.includes(lastPartOfLink)) {
+                    scannedLinks.push(lastPartOfLink);
                     displayScannedLinks();
                 }
             }
