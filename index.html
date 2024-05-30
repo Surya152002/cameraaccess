@@ -81,6 +81,11 @@
                     <i class="fas fa-qrcode"></i>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="dashboard.html" class="nav-link" id="dashboard-btn" style="display: none;">
+                    Dashboard
+                </a>
+            </li>
         </ul>
     </nav>
     
@@ -98,6 +103,7 @@
         let scannedLinks = [];
         let nextBtn = document.getElementById("next-btn");
         let savedLinksElement = document.getElementById("saved-links");
+        let dashboardBtn = document.getElementById("dashboard-btn");
         
         function domReady(fn) {
             if (document.readyState === "complete" || document.readyState === "interactive") {
@@ -127,24 +133,22 @@
                 const lastPartOfLink = decodeText.split("/").pop();
                 if (!scannedLinks.includes(lastPartOfLink)) {
                     scannedLinks.push(lastPartOfLink);
+                    displayScannedResults();
                 }
             }
             
             nextBtn.addEventListener("click", function() {
-                displayScannedLinks();
+                localStorage.setItem("scannedLinks", JSON.stringify(scannedLinks));
+                window.location.href = "dashboard.html";
             });
             
-            function displayScannedLinks() {
-                savedLinksElement.innerHTML = "";
+            function displayScannedResults() {
+                const scannedResultsElement = document.getElementById("scanned-results");
+                scannedResultsElement.innerHTML = "";
                 scannedLinks.forEach((link) => {
                     const linkElement = document.createElement("p");
-                    if (link.startsWith("N")) {
-                        linkElement.style.color = "green";
-                    } else if (link.startsWith("P")) {
-                        linkElement.style.color = "red";
-                    }
                     linkElement.textContent = link;
-                    savedLinksElement.appendChild(linkElement);
+                    scannedResultsElement.appendChild(linkElement);
                 });
             }
         });
