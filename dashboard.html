@@ -200,7 +200,7 @@
       
       const buttons = document.querySelectorAll('#button-row button');
       const checkboxes = document.querySelectorAll('.checkbox-row input');
-      let scannedLinks = JSON.parse(localStorage.getItem("scannedLinks")) || [];
+      let scannedLinks = ["link1", "link2", "link3", "link4", "link5", "link6", "link7", "link8"];
       let shuffledLinks = [];
       let sniffedLinks = [];
       let unsniffedLinks = [];
@@ -293,4 +293,5 @@
           .catch(error => console.error('Error accessing camera:', error));
     </script>
 </body>
+
 </html>
