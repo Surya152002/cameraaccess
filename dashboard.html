@@ -169,6 +169,7 @@
                 checkbox.addEventListener("change", function() {
                     if (checkbox.checked) {
                         sniffedList.push(checkbox.nextElementSibling.textContent);
+                        unsniffedList = unsniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
                     } else {
                         sniffedList = sniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
                     }
@@ -178,18 +179,12 @@
             });
             
             feedBtn.addEventListener("click", function() {
-                let nValues = scannedLinks.filter(link => link.startsWith("N"));
-                let pValues = scannedLinks.filter(link => link.startsWith("P"));
-                
-                // Randomly choose 7 "N" values
-                let randomNValues = shuffleArray(nValues).slice(0, 7);
-                
-                // Insert the "P" value randomly into the shuffled list
-                let randomIndex = Math.floor(Math.random() * 8);
-                randomNValues.splice(randomIndex, 0, pValues[0]);
-                
-                buttons.forEach((button, index) => {
-                    button.textContent = randomNValues[index];
+                checkboxes.forEach((checkbox) => {
+                    if (checkbox.checked) {
+                        checkbox.checked = false;
+                        sniffedList.push(checkbox.nextElementSibling.textContent);
+                        unsniffedList = unsniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
+                    }
                 });
                 
                 updateLists();
