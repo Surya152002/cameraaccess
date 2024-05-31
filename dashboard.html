@@ -223,15 +223,16 @@
             <i class="fas fa-expand fullscreen-icon" style="position: absolute; bottom: 10px; right: 10px;"></i>
         </div>
         <!-- HTML -->
-        <div class="button-row" id="button-row">
-            <button class="button green" data-link="N"></button>
-            <button class="button green" data-link="N"></button>
-            <button class="button green" data-link="N"></button>
-            <button class="button green" data-link="N"></button>
-            <button class="button green" data-link="N"></button>
-            <button class="button green" data-link="N"></button>
-            <button class="button green" data-link="N"></button>
-            <button class="button red" data-link="P"></button>
+        <!-- Add the buttons -->
+        <div class="button-row">
+            <button id="button1" class="button green"></button>
+            <button id="button2" class="button green"></button>
+            <button id="button3" class="button green"></button>
+            <button id="button4" class="button green"></button>
+            <button id="button5" class="button green"></button>
+            <button id="button6" class="button green"></button>
+            <button id="button7" class="button green"></button>
+            <button id="button8" class="button green"></button>
         </div>
 
         
@@ -344,7 +345,7 @@
             el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
         }
       
-      const buttons = document.querySelectorAll('#button-row button');
+    
       const checkboxes = document.querySelectorAll('.checkbox-row input');
       let scannedLinks = JSON.parse(localStorage.getItem("scannedLinks")) || [];
 
@@ -352,12 +353,32 @@
       let sniffedLinks = [];
       let unsniffedLinks = [];
            
-     // JavaScript
+    // Add event listeners for the buttons
+const buttons = document.querySelectorAll('.button-row button');
+buttons.forEach((button, index) => {
+    button.addEventListener('click', function() {
+        // Get the checkbox value
+        const checkbox = document.querySelector(`#checkbox${index + 1}`);
+        const checkboxValue = checkbox.checked ? 'P' : 'N';
+
+        // Update the button text and color
+        button.textContent = checkboxValue;
+        if (checkboxValue.startsWith('P')) {
+            button.classList.remove('green');
+            button.classList.add('red');
+        } else {
+            button.classList.remove('red');
+            button.classList.add('green');
+        }
+    });
+});
+
+// Function to randomize the button values
 function randomizeLinks() {
     let checkboxValues = Array.from(checkboxes).map(checkbox => checkbox.checked ? 'P' : 'N');
     let pCount = checkboxValues.filter(value => value === 'P').length;
 
-    if (pCount == 1) {
+    if (pCount < 1) {
         // Ensure at least 1 'P' value
         let additionalPValue = 'P';
         checkboxValues = checkboxValues.concat([additionalPValue]);
@@ -370,13 +391,16 @@ function randomizeLinks() {
         button.textContent = shuffledLinks[index]; // Display the value on the button
 
         if (shuffledLinks[index].startsWith('P')) {
+            button.classList.remove('green');
             button.classList.add('red');
         } else {
+            button.classList.remove('red');
             button.classList.add('green');
         }
     });
 }
 
+randomizeLinks();
 
 
 
