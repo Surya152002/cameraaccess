@@ -333,23 +333,26 @@
       let unsniffedLinks = [];
       
       function randomizeLinks() {
-    let checkboxValues = Array.from(checkboxes).map(checkbox => checkbox.checked ? 'P' : 'N');
-    let pCount = checkboxValues.filter(value => value === 'P').length;
-
-    if (pCount < 2) {
-        // Ensure at least 2 'P' values
-        let additionalPValues = Array(2 - pCount).fill('P');
-        checkboxValues = checkboxValues.concat(additionalPValues);
-    }
-
-    shuffledLinks = checkboxValues.sort(() => Math.random() - 0.5);
-
-    buttons.forEach((button, index) => {
-        button.dataset.link = shuffledLinks[index];
-        button.textContent = shuffledLinks[index]; // Display the value on the button
-    });
-}
-
+            let pCount = 0;
+            shuffledLinks = scannedLinks.slice().sort(() => Math.random() - 0.5);
+            buttons.forEach((button, index) => {
+                button.dataset.link = shuffledLinks[index];
+                button.textContent = shuffledLinks[index]; // Display the link text on the button
+                if (shuffledLinks[index].startsWith('P')) {
+                    button.classList.add('active');
+                    pCount++;
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+            while (pCount < 2) {
+                const randomIndex = Math.floor(Math.random() * shuffledLinks.length);
+                if (!shuffledLinks[randomIndex].startsWith('P')) {
+                    shuffledLinks.splice(randomIndex, 1);
+                    pCount++;
+                }
+            }
+        }
 
       
       function interchangeRedButton() {
