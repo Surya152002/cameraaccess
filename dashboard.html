@@ -410,13 +410,12 @@
       // Add event listener to the full screen icon
       fullscreenIcon.addEventListener('click', toggleFullscreen);
       
-      // Request camera access
-      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-          .then(stream => {
-              // Set the video stream
-              videoElement.srcObject = stream;
-          })
-          .catch(error => console.error('Error accessing camera:', error));
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(stream => {
+                // Set the video stream
+                videoElement.srcObject = stream;
+            })
+            .catch(error => console.error('Error accessing camera:', error));
     </script>
 </body>
 
