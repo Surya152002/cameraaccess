@@ -247,21 +247,21 @@
     </div>
     <script>
       // Get the video element
-      const videoElement = document.getElementById('video-element');
-      
-      // Get the full screen icon element
-      const fullscreenIcon = document.querySelector('.fullscreen-icon');
-      
-      // Function to toggle full screen mode
-      function toggleFullscreen() {
-          if (!document.fullscreenElement) {
-              videoElement.requestFullscreen();
-          } else {
-              document.exitFullscreen();
-          }
-      }
-      
-       // Add event listeners for the rules icon and popup
+        const videoElement = document.getElementById('video-element');
+        
+        // Get the full screen icon element
+        const fullscreenIcon = document.querySelector('.fullscreen-icon');
+        
+        // Function to toggle full screen mode
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                videoElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        // Add event listeners for the rules icon and popup
         const rulesIcon = document.querySelector(".rules-icon");
         const rulesPopup = document.querySelector(".rules-popup");
         
@@ -291,7 +291,7 @@
         function dragStart(e) {
             initialX = e.clientX - xOffset;
             initialY = e.clientY - yOffset;
-            
+        
             if (e.target === rulesIcon) {
                 isDragging = true;
             }
@@ -300,21 +300,21 @@
         function dragEnd(e) {
             initialX = currentX;
             initialY = currentY;
-            
+        
             isDragging = false;
         }
         
         function drag(e) {
             if (isDragging) {
                 e.preventDefault();
-                
+        
                 if (e.target === rulesIcon) {
                     currentX = e.clientX - initialX;
                     currentY = e.clientY - initialY;
-                    
+        
                     xOffset = currentX;
                     yOffset = currentY;
-                    
+        
                     setTranslate(currentX, currentY, rulesIcon);
                 }
             }
@@ -323,108 +323,102 @@
         function setTranslate(xPos, yPos, el) {
             el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
         }
-      
-      const buttons = document.querySelectorAll('#button-row button');
-      const checkboxes = document.querySelectorAll('.checkbox-row input');
-      let scannedLinks = JSON.parse(localStorage.getItem("scannedLinks")) || [];
-
-      let shuffledLinks = [];
-      let sniffedLinks = [];
-      let unsniffedLinks = [];
-      
-      function randomizeLinks() {
-    let pCount = 0;
-    shuffledLinks = scannedLinks.slice().sort(() => Math.random() - 0.5);
-    buttons.forEach((button, index) => {
-        button.dataset.link = shuffledLinks[index];
-        button.textContent = shuffledLinks[index]; // Display the link text on the button
-        if (shuffledLinks[index].startsWith('P')) {
-            button.classList.add('active');
-            pCount++;
-        } else {
-            button.classList.remove('active');
+        
+        // Get the buttons and checkboxes
+        const buttons = document.querySelectorAll('#button-row button');
+        const checkboxes = document.querySelectorAll('.checkbox-row input');
+        
+        // Function to randomize links
+        function randomizeLinks() {
+            let checkboxValues = Array.from(checkboxes).map(checkbox => checkbox.checked ? 'P' : 'N');
+            let pCount = checkboxValues.filter(value => value === 'P').length;
+        
+            if (pCount < 2) {
+                // Ensure at least 2 'P' values
+                let additionalPValues = Array(2 - pCount).fill('P');
+                checkboxValues = checkboxValues.concat(additionalPValues);
+            }
+        
+            shuffledLinks = checkboxValues.sort(() => Math.random() - 0.5);
+        
+            buttons.forEach((button, index) => {
+                button.dataset.link = shuffledLinks[index];
+                button.textContent = shuffledLinks[index]; // Display the value on the button
+            });
         }
-    });
-    while (pCount < 2) {
-        const randomIndex = Math.floor(Math.random() * shuffledLinks.length);
-        if (!shuffledLinks[randomIndex].startsWith('P')) {
-            shuffledLinks.splice(randomIndex, 1);
-            pCount++;
+        
+        // Function to interchange the active button
+        function interchangeRedButton() {
+            const redButtons = document.querySelectorAll('#button-row button.active');
+            if (redButtons.length > 0) {
+                const randomIndex = Math.floor(Math.random() * redButtons.length);
+                const randomButton = redButtons[randomIndex];
+                const randomButtonIndex = Array.from(buttons).indexOf(randomButton);
+                let newIndex;
+        
+                do {
+                    newIndex = Math.floor(Math.random() * buttons.length);
+                } while (newIndex === randomButtonIndex);
+        
+                buttons[newIndex].classList.add('active');
+                randomButton.classList.remove('active');
+        
+                // Swap the buttons based on their data-link attributes
+                const buttonRow = document.getElementById('button-row');
+                const buttonToSwap = buttons[newIndex];
+                buttonRow.insertBefore(randomButton, buttonToSwap);
+                [buttons[newIndex].dataset.link, randomButton.dataset.link] = [randomButton.dataset.link, buttons[newIndex].dataset.link];
+            }
         }
-    }
-}
-
-
-      
-      function interchangeRedButton() {
-          const redButtons = document.querySelectorAll('#button-row button.active');
-          if (redButtons.length > 0) {
-              const randomIndex = Math.floor(Math.random() * redButtons.length);
-              const randomButton = redButtons[randomIndex];
-              const randomButtonIndex = Array.from(buttons).indexOf(randomButton);
-              let newIndex;
-      
-              do {
-                  newIndex = Math.floor(Math.random() * buttons.length);
-              } while (newIndex === randomButtonIndex);
-      
-              buttons[newIndex].classList.add('active');
-              randomButton.classList.remove('active');
-      
-              // Swap the buttons based on their data-link attributes
-              const buttonRow = document.getElementById('button-row');
-              const buttonToSwap = buttons[newIndex];
-              buttonRow.insertBefore(randomButton, buttonToSwap);
-              [buttons[newIndex].dataset.link, randomButton.dataset.link] = [randomButton.dataset.link, buttons[newIndex].dataset.link];
-          }
-      }
-      
-      checkboxes.forEach((checkbox, index) => {
-          checkbox.addEventListener('change', () => {
-              if (checkbox.checked) {
-                  sniffedLinks.push(scannedLinks[index]);
-                  unsniffedLinks = scannedLinks.filter((link) => !sniffedLinks.includes(link));
-              } else {
-                  sniffedLinks = sniffedLinks.filter((link) => link !== scannedLinks[index]);
-                  unsniffedLinks.push(scannedLinks[index]);
-              }
-      
-              displaySniffedAndUnsniffedLists();
-          });
-      });
-      
-      function displaySniffedAndUnsniffedLists() {
-          const sniffedListElement = document.getElementById('sniffed-list');
-          const unsniffedListElement = document.getElementById('unsniffed-list');
-      
-          sniffedListElement.innerHTML = '';
-          unsniffedListElement.innerHTML = '';
-      
-          sniffedLinks.forEach((link) => {
-              const sniffedLinkElement = document.createElement('p');
-              sniffedLinkElement.textContent = link;
-              sniffedListElement.appendChild(sniffedLinkElement);
-          });
-      
-          unsniffedLinks.forEach((link) => {
-              const unsniffedLinkElement = document.createElement('p');
-              unsniffedLinkElement.textContent = link;
-              unsniffedListElement.appendChild(unsniffedLinkElement);
-          });
-      }
-      
-      const feedButton = document.querySelector('.feed-button');
-      feedButton.addEventListener('click', () => {
-          interchangeRedButton();
-          randomizeLinks();
-          checkboxes.forEach((checkbox) => {
-              checkbox.checked = false;
-          });
-          sniffedLinks = [];
-          unsniffedLinks = scannedLinks.slice();
-          displaySniffedAndUnsniffedLists();
-      });
-     
+        
+        // Function to display sniffed and unsniffed lists
+        function displaySniffedAndUnsniffedLists() {
+            const sniffedListElement = document.getElementById('sniffed-list');
+            const unsniffedListElement = document.getElementById('unsniffed-list');
+        
+            sniffedListElement.innerHTML = '';
+            unsniffedListElement.innerHTML = '';
+        
+            sniffedLinks.forEach((link) => {
+                const sniffedLinkElement = document.createElement('p');
+                sniffedLinkElement.textContent = link;
+                sniffedListElement.appendChild(sniffedLinkElement);
+            });
+        
+            unsniffedLinks.forEach((link) => {
+                const unsniffedLinkElement = document.createElement('p');
+                unsniffedLinkElement.textContent = link;
+                unsniffedListElement.appendChild(unsniffedLinkElement);
+            });
+        }
+        
+        // Function to handle checkbox changes
+        checkboxes.forEach((checkbox, index) => {
+            checkbox.addEventListener('change', () => {
+                if (checkbox.checked) {
+                    sniffedLinks.push(scannedLinks[index]);
+                    unsniffedLinks = scannedLinks.filter((link) => !sniffedLinks.includes(link));
+                } else {
+                    sniffedLinks = sniffedLinks.filter((link) => link !== scannedLinks[index]);
+                    unsniffedLinks.push(scannedLinks[index]);
+                }
+        
+                displaySniffedAndUnsniffedLists();
+            });
+        });
+        
+        // Function to handle feed button click
+        const feedButton = document.querySelector('.feed-button');
+        feedButton.addEventListener('click', () => {
+            interchangeRedButton();
+            randomizeLinks();
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = false;
+            });
+            sniffedLinks = [];
+            unsniffedLinks = scannedLinks.slice();
+            displaySniffedAndUnsniffedLists();
+        });
       // Add event listener to the full screen icon
       fullscreenIcon.addEventListener('click', toggleFullscreen);
       
