@@ -333,26 +333,27 @@
       let unsniffedLinks = [];
       
       function randomizeLinks() {
-            let pCount = 0;
-            shuffledLinks = scannedLinks.slice().sort(() => Math.random() - 0.5);
-            buttons.forEach((button, index) => {
-                button.dataset.link = shuffledLinks[index];
-                button.textContent = shuffledLinks[index]; // Display the link text on the button
-                if (shuffledLinks[index].startsWith('P')) {
-                    button.classList.add('active');
-                    pCount++;
-                } else {
-                    button.classList.remove('active');
-                }
-            });
-            while (pCount < 2) {
-                const randomIndex = Math.floor(Math.random() * shuffledLinks.length);
-                if (!shuffledLinks[randomIndex].startsWith('P')) {
-                    shuffledLinks.splice(randomIndex, 1);
-                    pCount++;
-                }
-            }
+    let pCount = 0;
+    shuffledLinks = scannedLinks.slice().sort(() => Math.random() - 0.5);
+    buttons.forEach((button, index) => {
+        button.dataset.link = shuffledLinks[index];
+        button.textContent = shuffledLinks[index]; // Display the link text on the button
+        if (shuffledLinks[index].startsWith('P')) {
+            button.classList.add('active');
+            pCount++;
+        } else {
+            button.classList.remove('active');
         }
+    });
+    while (pCount < 2) {
+        const randomIndex = Math.floor(Math.random() * shuffledLinks.length);
+        if (!shuffledLinks[randomIndex].startsWith('P')) {
+            shuffledLinks.splice(randomIndex, 1);
+            pCount++;
+        }
+    }
+}
+
 
       
       function interchangeRedButton() {
