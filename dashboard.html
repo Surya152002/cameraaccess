@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <style>
+        <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -87,38 +87,37 @@
             margin: 10px;
         }
     </style>
-    </style>
 </head>
 <body>
     <div class="container">
         <div class="button-container">
-            <button class="button button-green" id="n1">N1</button>
-            <button class="button button-green" id="n2">N2</button>
-            <button class="button button-green" id="n3">N3</button>
-            <button class="button button-green" id="n4">N4</button>
-            <button class="button button-green" id="n5">N5</button>
-            <button class="button button-green" id="n6">N6</button>
-            <button class="button button-green" id="n7">N7</button>
-            <button class="button button-red" id="p1">P1</button>
+            <button class="button button-green" id="button1">N1</button>
+            <button class="button button-green" id="button2">N2</button>
+            <button class="button button-green" id="button3">N3</button>
+            <button class="button button-green" id="button4">N4</button>
+            <button class="button button-green" id="button5">N5</button>
+            <button class="button button-green" id="button6">N6</button>
+            <button class="button button-green" id="button7">N7</button>
+            <button class="button button-red" id="button8">P1</button>
         </div>
         
         <div class="checkbox-container">
-            <input type="checkbox" id="n1-checkbox" class="checkbox">
-            <label for="n1-checkbox">N1</label>
-            <input type="checkbox" id="n2-checkbox" class="checkbox">
-            <label for="n2-checkbox">N2</label>
-            <input type="checkbox" id="n3-checkbox" class="checkbox">
-            <label for="n3-checkbox">N3</label>
-            <input type="checkbox" id="n4-checkbox" class="checkbox">
-            <label for="n4-checkbox">N4</label>
-            <input type="checkbox" id="n5-checkbox" class="checkbox">
-            <label for="n5-checkbox">N5</label>
-            <input type="checkbox" id="n6-checkbox" class="checkbox">
-            <label for="n6-checkbox">N6</label>
-            <input type="checkbox" id="n7-checkbox" class="checkbox">
-            <label for="n7-checkbox">N7</label>
-            <input type="checkbox" id="p1-checkbox" class="checkbox">
-            <label for="p1-checkbox">P1</label>
+            <input type="checkbox" id="checkbox1" class="checkbox">
+            <label for="checkbox1">N1</label>
+            <input type="checkbox" id="checkbox2" class="checkbox">
+            <label for="checkbox2">N2</label>
+            <input type="checkbox" id="checkbox3" class="checkbox">
+            <label for="checkbox3">N3</label>
+            <input type="checkbox" id="checkbox4" class="checkbox">
+            <label for="checkbox4">N4</label>
+            <input type="checkbox" id="checkbox5" class="checkbox">
+            <label for="checkbox5">N5</label>
+            <input type="checkbox" id="checkbox6" class="checkbox">
+            <label for="checkbox6">N6</label>
+            <input type="checkbox" id="checkbox7" class="checkbox">
+            <label for="checkbox7">N7</label>
+            <input type="checkbox" id="checkbox8" class="checkbox">
+            <label for="checkbox8">P1</label>
         </div>
         
         <button class="feed-btn" id="feed-btn">
@@ -140,22 +139,43 @@
             let sniffedListElement = document.getElementById("sniffed-list");
             let unsniffedListElement = document.getElementById("unsniffed-list");
             
-            buttons.forEach((button, index) => {
-                if (scannedLinks[index].startsWith("N")) {
-                    button.classList.add("button-green");
-                } else {
-                    button.classList.add("button-red");
-                }
-            });
+            function initializeButtonsAndCheckboxes() {
+                let nValues = scannedLinks.filter(link => link.startsWith("N"));
+                let pValues = scannedLinks.filter(link => link.startsWith("P"));
+                
+                // Randomly choose 7 "N" values and 1 "P" value
+                let randomNValues = shuffleArray(nValues).slice(0, 7);
+                let randomPValue = shuffleArray(pValues)[0];
+                
+                // Set button and checkbox values
+                buttons.forEach((button, index) => {
+                    if (index < 7) {
+                        button.textContent = randomNValues[index];
+                        button.id = `button${index + 1}`;
+                        checkboxes[index].id = `checkbox${index + 1}`;
+                        checkboxes[index].nextElementSibling.textContent = randomNValues[index];
+                    } else {
+                        button.textContent = randomPValue;
+                        button.id = `button8`;
+                        checkboxes[index].id = `checkbox8`;
+                        checkboxes[index].nextElementSibling.textContent = randomPValue;
+                    }
+                });
+                
+                // Remove chosen values from unsniffedList
+                unsniffedList = unsniffedList.filter(link => !randomNValues.includes(link) && link !== randomPValue);
+            }
+            
+            initializeButtonsAndCheckboxes();
             
             checkboxes.forEach((checkbox, index) => {
                 checkbox.addEventListener("change", function() {
                     if (checkbox.checked) {
-                        sniffedList.push(scannedLinks[index]);
-                        unsniffedList = unsniffedList.filter((link) => link !== scannedLinks[index]);
+                        sniffedList.push(checkbox.nextElementSibling.textContent);
+                        unsniffedList = unsniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
                     } else {
-                        sniffedList = sniffedList.filter((link) => link !== scannedLinks[index]);
-                        unsniffedList.push(scannedLinks[index]);
+                        sniffedList = sniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
+                        unsniffedList.push(checkbox.nextElementSibling.textContent);
                     }
                     updateLists();
                     updateButtonColors();
@@ -163,7 +183,7 @@
             });
             
             feedBtn.addEventListener("click", function() {
-                unsniffedList = shuffle(unsniffedList);
+                initializeButtonsAndCheckboxes();
                 updateLists();
                 updateButtonColors();
             });
@@ -187,8 +207,8 @@
             
             function updateButtonColors() {
                 buttons.forEach((button, index) => {
-                    if (sniffedList.includes(scannedLinks[index])) {
-                        if (scannedLinks[index].startsWith("N")) {
+                    if (sniffedList.includes(button.textContent)) {
+                        if (button.textContent.startsWith("N")) {
                             button.classList.add("button-green");
                             button.classList.remove("button-red");
                         } else {
@@ -202,20 +222,8 @@
                 });
             }
             
-            function shuffle(array) {
-                let currentIndex = array.length;
-                let temporaryValue;
-                let randomIndex;
-                
-                while (0 !== currentIndex) {
-                    randomIndex = Math.floor(Math.random() * currentIndex);
-                    currentIndex -= 1;
-                    temporaryValue = array[currentIndex];
-                    array[currentIndex] = array[randomIndex];
-                    array[randomIndex] = temporaryValue;
-                }
-                
-                return array;
+            function shuffleArray(array) {
+                return array.sort(() => Math.random() - 0.5);
             }
         </script>
     </div>
