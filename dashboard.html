@@ -331,14 +331,16 @@
       let shuffledLinks = [];
       let sniffedLinks = [];
       let unsniffedLinks = [];
+           
       function randomizeLinks() {
     let checkboxValues = Array.from(checkboxes).map(checkbox => checkbox.checked ? 'P' : 'N');
     let pCount = checkboxValues.filter(value => value === 'P').length;
 
-    if (pCount < 2) {
-        // Ensure at least 2 'P' values
-        let additionalPValues = Array(2 - pCount).fill('P');
-        checkboxValues = checkboxValues.concat(additionalPValues);
+    if (pCount == 1) {
+        // Ensure only one 'P' value
+        checkboxValues = checkboxValues.filter(value => value === 'P').slice(0, 1);
+        let additionalNValues = Array(7 - pCount).fill('N');
+        checkboxValues = checkboxValues.concat(additionalNValues);
     }
 
     shuffledLinks = checkboxValues.sort(() => Math.random() - 0.5);
@@ -348,6 +350,7 @@
         button.textContent = shuffledLinks[index]; // Display the value on the button
     });
 }
+
 
 
       
