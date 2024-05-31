@@ -357,7 +357,7 @@ function randomizeLinks() {
     let checkboxValues = Array.from(checkboxes).map(checkbox => checkbox.checked ? 'P' : 'N');
     let pCount = checkboxValues.filter(value => value === 'P').length;
 
-    if (pCount < 1) {
+    if (pCount == 1) {
         // Ensure at least 1 'P' value
         let additionalPValue = 'P';
         checkboxValues = checkboxValues.concat([additionalPValue]);
