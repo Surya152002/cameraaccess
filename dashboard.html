@@ -145,7 +145,7 @@
                 
                 // Randomly choose 7 "N" values and 1 "P" value
                 let randomNValues = shuffleArray(nValues).slice(0, 7);
-                let randomPValue = shuffleArray(pValues)[0];
+                let randomPValue = pValues[0];
                 
                 // Set button and checkbox values
                 buttons.forEach((button, index) => {
@@ -161,9 +161,6 @@
                         checkboxes[index].nextElementSibling.textContent = randomPValue;
                     }
                 });
-                
-                // Remove chosen values from unsniffedList
-                unsniffedList = unsniffedList.filter(link => !randomNValues.includes(link) && link !== randomPValue);
             }
             
             initializeButtonsAndCheckboxes();
@@ -172,10 +169,8 @@
                 checkbox.addEventListener("change", function() {
                     if (checkbox.checked) {
                         sniffedList.push(checkbox.nextElementSibling.textContent);
-                        unsniffedList = unsniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
                     } else {
                         sniffedList = sniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
-                        unsniffedList.push(checkbox.nextElementSibling.textContent);
                     }
                     updateLists();
                     updateButtonColors();
@@ -183,7 +178,21 @@
             });
             
             feedBtn.addEventListener("click", function() {
-                initializeButtonsAndCheckboxes();
+                let nValues = scannedLinks.filter(link => link.startsWith("N"));
+                let pValues = scannedLinks.filter(link => link.startsWith("P"));
+                
+                // Randomly choose 7 "N" values and keep the "P" value in the same position
+                let randomNValues = shuffleArray(nValues).slice(0, 7);
+                let randomPValue = pValues[0];
+                
+                buttons.forEach((button, index) => {
+                    if (index < 7) {
+                        button.textContent = randomNValues[index];
+                    } else {
+                        button.textContent = randomPValue;
+                    }
+                });
+                
                 updateLists();
                 updateButtonColors();
             });
