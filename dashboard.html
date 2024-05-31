@@ -333,11 +333,16 @@
       let unsniffedLinks = [];
       
       function randomizeLinks() {
-          shuffledLinks = scannedLinks.slice().sort(() => Math.random() - 0.5);
-          buttons.forEach((button, index) => {
-              button.dataset.link = shuffledLinks[index];
-          });
-      }
+    // Shuffle the scannedLinks array
+    shuffledLinks = scannedLinks.slice().sort(() => Math.random() - 0.5);
+    
+    // Assign the shuffled links to the buttons
+    buttons.forEach((button, index) => {
+        button.dataset.link = shuffledLinks[index];
+        button.textContent = shuffledLinks[index]; // Display the link text on the button
+    });
+}
+
       
       function interchangeRedButton() {
           const redButtons = document.querySelectorAll('#button-row button.active');
