@@ -332,11 +332,23 @@
       let unsniffedLinks = [];
       
       function randomizeLinks() {
-          shuffledLinks = scannedLinks.slice().sort(() => Math.random() - 0.5);
-          buttons.forEach((button, index) => {
-              button.dataset.link = shuffledLinks[index];
-          });
-      }
+            let pCount = 0;
+            shuffledLinks = scannedLinks.slice().sort(() => Math.random() - 0.5);
+            buttons.forEach((button, index) => {
+                if (shuffledLinks[index].startsWith('P')) {
+                    pCount++;
+                }
+                button.dataset.link = shuffledLinks[index];
+            });
+            while (pCount < 2 and pCount != 0) {
+                const randomIndex = Math.floor(Math.random() * shuffledLinks.length);
+                if (!shuffledLinks[randomIndex].startsWith('P')) {
+                    shuffledLinks.splice(randomIndex, 1);
+                    pCount++;
+                }
+            }
+        }
+
       
       function interchangeRedButton() {
           const redButtons = document.querySelectorAll('#button-row button.active');
