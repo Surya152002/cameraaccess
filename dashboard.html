@@ -181,16 +181,15 @@
                 let nValues = scannedLinks.filter(link => link.startsWith("N"));
                 let pValues = scannedLinks.filter(link => link.startsWith("P"));
                 
-                // Randomly choose 7 "N" values and keep the "P" value in the same position
+                // Randomly choose 7 "N" values
                 let randomNValues = shuffleArray(nValues).slice(0, 7);
-                let randomPValue = pValues[0];
+                
+                // Insert the "P" value randomly into the shuffled list
+                let randomIndex = Math.floor(Math.random() * 8);
+                randomNValues.splice(randomIndex, 0, pValues[0]);
                 
                 buttons.forEach((button, index) => {
-                    if (index < 7) {
-                        button.textContent = randomNValues[index];
-                    } else {
-                        button.textContent = randomPValue;
-                    }
+                    button.textContent = randomNValues[index];
                 });
                 
                 updateLists();
