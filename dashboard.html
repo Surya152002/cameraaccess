@@ -146,7 +146,7 @@ function initializeButtonsAndCheckboxes() {
 
     // Randomly choose 7 "N" values and 1 "P" value
     let randomNValues = shuffleArray(nValues).slice(0, 7);
-    let randomPValue = shuffleArray(pValues)[0];
+    let randomPValue = pValues[0];
 
     // Set button and checkbox values
     buttons.forEach((button, index) => {
@@ -155,11 +155,13 @@ function initializeButtonsAndCheckboxes() {
             button.id = `button${index + 1}`;
             checkboxes[index].id = `checkbox${index + 1}`;
             checkboxes[index].nextElementSibling.textContent = randomNValues[index];
+            checkboxes[index].checked = sniffedList.includes(randomNValues[index]);
         } else {
             button.textContent = randomPValue;
             button.id = `button8`;
             checkboxes[index].id = `checkbox8`;
             checkboxes[index].nextElementSibling.textContent = randomPValue;
+            checkboxes[index].checked = sniffedList.includes(randomPValue);
         }
     });
 }
@@ -168,21 +170,27 @@ initializeButtonsAndCheckboxes();
 
 checkboxes.forEach((checkbox, index) => {
     checkbox.addEventListener("change", function() {
+        let selectedValue = checkbox.nextElementSibling.textContent;
         if (checkbox.checked) {
-            let selectedValue = checkbox.nextElementSibling.textContent;
             if (!sniffedList.includes(selectedValue)) {
                 sniffedList.push(selectedValue);
                 unsniffedList = unsniffedList.filter(link => link !== selectedValue);
-                localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
             }
-            checkbox.checked = false; // Uncheck the checkbox after saving
-            updateLists();
-            updateButtonColors();
+        } else {
+            sniffedList = sniffedList.filter(link => link !== selectedValue);
+            unsniffedList.push(selectedValue);
+            unsniffedList = shuffleArray(unsniffedList);
         }
+        localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
+        updateLists();
+        updateButtonColors();
     });
 });
 
 feedBtn.addEventListener("click", function() {
+    sniffedList = sniffedList.slice(); // Make a copy to avoid reference issues
+    localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
+
     let nValues = unsniffedList.filter(link => link.startsWith("N"));
     let pValues = unsniffedList.filter(link => link.startsWith("P"));
 
@@ -191,7 +199,7 @@ feedBtn.addEventListener("click", function() {
 
     // Insert the "P" value randomly into the shuffled list
     let randomIndex = Math.floor(Math.random() * 8);
-    randomNValues.splice(randomIndex, 0, shuffleArray(pValues)[0]);
+    randomNValues.splice(randomIndex, 0, pValues[0]);
 
     initializeButtonsAndCheckboxes();
 
