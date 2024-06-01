@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .button {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .button:hover {
+            background-color: #555;
+        }
+        
+        .button-green {
+            background-color: #3e8e41;
+        }
+        
+        .button-red {
+            background-color: #e74c3c;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .checkbox {
+            margin: 0 10px;
+        }
+        
+        .feed-btn {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .feed-btn:hover {
+            background-color: #555;
+        }
+        
+        .feed-btn i {
+            font-size: 20px;
+        }
+        
+        .list-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .list {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 45%;
+            margin: 10px;
+        }
+        .icons-container {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+        }
+        .icon {
+            display: block;
+            width: 40px;
+            height: 40px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            line-height: 40px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .icon:hover {
+            background-color: #45a049;
+        }
+        .dog-info {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+            overflow: auto;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 5px;
+            position: relative;
+        }
+        .navbar {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 20px;
+        }
+        .top-right-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        }
+        .navbar-nav {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        
+        .nav-item {
+            margin-left: 20px;
+        }
+        
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        
+        .nav-link i {
+            font-size: 20px;
+        }
+        .video-container {
+            position: relative;
+        }
+        
+        .video-container video {
+            width: 100%;
+            height: 100vh;
+            object-fit: cover;
+        }
+        
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .button {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .button:hover {
+            background-color: #444;
+        }
+        
+        .info-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: move;
+            z-index: 1;
+        }
+        
+        .info-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 2;
+            display: none;
+        }
+        
+        .info-popup h2 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .info-popup button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">Dashboard</div>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <div class="video-container">
+            <video id="cameraFeed" autoplay playsinline></video>
+            <div class="top-right-icon" onclick="toggleFullScreen()">
+                <i class="fas fa-expand"></i>
+            </div>
+        </div>
+    </div>
+    <div class="info-icon" onclick="toggleInfoPopup()">
+        <i class="fas fa-info-circle"></i>
+    </div>
+    
+    <div class="info-popup" id="infoPopup">
+        <ul>
+            <li>7 negative values and 1 positive value</li>
+            <li>Values are shuffled based on the checked checkboxes</li>
+            <li>Only one positive value is allowed</li>
+            <li>No repetition after shuffled</li>
+            <li>Shuffled based on the positive will not be next to the previously located place in a row</li>
+        </ul>
+    </div>
+    <div class="container">
+        <div class="button-container">
+            <button class="button button-green" id="button1">N1</button>
+            <button class="button button-green" id="button2">N2</button>
+            <button class="button button-green" id="button3">N3</button>
+            <button class="button button-green" id="button4">N4</button>
+            <button class="button button-green" id="button5">N5</button>
+            <button class="button button-green" id="button6">N6</button>
+            <button class="button button-green" id="button7">N7</button>
+            <button class="button button-red" id="button8">P1</button>
+        </div>
+        
+        <div class="checkbox-container">
+            <input type="checkbox" id="checkbox1" class="checkbox">
+            <label for="checkbox1">N1</label>
+            <input type="checkbox" id="checkbox2" class="checkbox">
+            <label for="checkbox2">N2</label>
+            <input type="checkbox" id="checkbox3" class="checkbox">
+            <label for="checkbox3">N3</label>
+            <input type="checkbox" id="checkbox4" class="checkbox">
+            <label for="checkbox4">N4</label>
+            <input type="checkbox" id="checkbox5" class="checkbox">
+            <label for="checkbox5">N5</label>
+            <input type="checkbox" id="checkbox6" class="checkbox">
+            <label for="checkbox6">N6</label>
+            <input type="checkbox" id="checkbox7" class="checkbox">
+            <label for="checkbox7">N7</label>
+            <input type="checkbox" id="checkbox8" class="checkbox">
+            <label for="checkbox8">P1</label>
+        </div>
+        
+        <button class="feed-btn" id="feed-btn">
+            <i class="fas fa-random"></i>
+        </button>
+        
+        <div class="list-container">
+            <div class="list" id="sniffed-list"></div>
+            <div class="list" id="unsniffed-list"></div>
+        </div>
+        <div class="container">
+            <div class="content">
+                <div class="dog-info" id="dogInfoContainer">
+                    <form id="dogForm" style="display: none;">
+                        <label for="dogId">Dog ID:</label>
+                        <input type="text" id="dogIdInput">
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    
+        <div class="icons-container">
+            <div class="icon" onclick="openForm()">
+                <i class="fas fa-paw"></i>
+            </div>
+            <div class="icon" onclick="toggleInformationIcon()">
+                <i class="fas fa-info"></i>
+            </div>
+        </div>
+    
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeForm()">&times;</span>
+                <form id="dogFormPopup">
+                    <label for="dogId">Dog ID:</label>
+                    <input type="text" id="dogIdInputPopup">
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+        
+        <script>
+            function toggleInfoPopup() {
+                const infoPopup = document.getElementById('infoPopup');
+                infoPopup.style.display = infoPopup.style.display === 'block' ? 'none' : 'block';
+            }
+
+            let scannedLinks = JSON.parse(localStorage.getItem("scannedLinks"));
+            let sniffedList = JSON.parse(localStorage.getItem("sniffedList")) || [];
+            let unsniffedList = scannedLinks.filter(link => !sniffedList.includes(link));
+
+            let buttons = document.querySelectorAll(".button");
+            let checkboxes = document.querySelectorAll(".checkbox");
+            let feedBtn = document.getElementById("feed-btn");
+            let sniffedListElement = document.getElementById("sniffed-list");
+            let unsniffedListElement = document.getElementById("unsniffed-list");
+
+            function initializeButtonsAndCheckboxes() {
+                let nValues = unsniffedList.filter(link => link.startsWith("N"));
+                let pValues = unsniffedList.filter(link => link.startsWith("P"));
+
+                // Randomly choose 7 "N" values and 1 "P" value
+                let randomNValues = shuffleArray(nValues).slice(0, 7);
+                let randomPValue = pValues[0];
+
+                // Set button and checkbox values
+                buttons.forEach((button, index) => {
+                    if (index < 7) {
+                        button.textContent = randomNValues[index];
+                        button.id = `button${index + 1}`;
+                        checkboxes[index].id = `checkbox${index + 1}`;
+                        checkboxes[index].nextElementSibling.textContent = randomNValues[index];
+                        checkboxes[index].checked = sniffedList.includes(randomNValues[index]);
+                    } else {
+                        button.textContent = randomPValue;
+                        button.id = `button8`;
+                        checkboxes[index].id = `checkbox8`;
+                        checkboxes[index].nextElementSibling.textContent = randomPValue;
+                        checkboxes[index].checked = sniffedList.includes(randomPValue);
+                    }
+                });
+            }
+
+            initializeButtonsAndCheckboxes();
+
+            checkboxes.forEach((checkbox, index) => {
+                checkbox.addEventListener("change", function() {
+                    let selectedValue = checkbox.nextElementSibling.textContent;
+                    if (checkbox.checked) {
+                        if (!sniffedList.includes(selectedValue)) {
+                            sniffedList.push(selectedValue);
+                            unsniffedList = unsniffedList.filter(link => link !== selectedValue);
+                        }
+                    } else {
+                        sniffedList = sniffedList.filter(link => link !== selectedValue);
+                        unsniffedList.push(selectedValue);
+                        unsniffedList = shuffleArray(unsniffedList);
+                    }
+                    localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
+                    updateLists();
+                    updateButtonColors();
+                });
+            });
+
+            feedBtn.addEventListener("click", function() {
+                sniffedList = sniffedList.slice(); // Make a copy to avoid reference issues
+                localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
+
+                let nValues = unsniffedList.filter(link => link.startsWith("N"));
+                let pValues = unsniffedList.filter(link => link.startsWith("P"));
+
+                // Randomly choose 7 "N" values
+                let randomNValues = shuffleArray(nValues).slice(0, 7);
+
+                // Insert the "P" value randomly into the shuffled list
+                let randomIndex = Math.floor(Math.random() * 8);
+                randomNValues.splice(randomIndex, 0, pValues[0]);
+
+                initializeButtonsAndCheckboxes();
+
+                updateLists();
+                updateButtonColors();
+            });
+
+            function updateLists() {
+                sniffedListElement.innerHTML = "";
+                unsniffedListElement.innerHTML = "";
+
+                sniffedList.forEach((link) => {
+                    const linkElement = document.createElement("p");
+                    linkElement.textContent = link;
+                    sniffedListElement.appendChild(linkElement);
+                });
+
+                unsniffedList.forEach((link) => {
+                    const linkElement = document.createElement("p");
+                    linkElement.textContent = link;
+                    unsniffedListElement.appendChild(linkElement);
+                });
+            }
+
+            function updateButtonColors() {
+                buttons.forEach((button, index) => {
+                    if (sniffedList.includes(button.textContent)) {
+                        if (button.textContent.startsWith("N")) {
+                            button.classList.add("button-green");
+                            button.classList.remove("button-red");
+                        } else {
+                            button.classList.add("button-red");
+                            button.classList.remove("button-green");
+                        }
+                    } else {
+                        button.classList.remove("button-green");
+                        button.classList.remove("button-red");
+                    }
+                });
+            }
+
+            // Function to handle nav-link click
+            const navLink = document.querySelector('.nav-link');
+            navLink.onclick = function() {
+                window.location.href = 'index.html';
+            };
+
+            // Function to toggle full screen
+            function toggleFullScreen() {
+            const video = document.getElementById('cameraFeed');
+            if (document.fullscreenElement === null) {
+                video.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+            }
+
+            function shuffleArray(array) {
+                return array.sort(() => Math.random() - 0.5);
+            }
+
+            function handleFormSubmit(event) {
+                event.preventDefault();
+                const dogId = document.getElementById('dogIdInput').value;
+                showDogInfo(dogId);
+            }
+
+            // Function to show dog information based on dog id
+            function showDogInfo(dogId) {
+                const dogInfo = document.getElementById('dogInfoContainer');
+                dogInfo.innerHTML = `Dog ID: ${dogId}<br>Information: Fetch from database`;
+
+                dogInfo.style.display = 'block';
+            }
+
+            // Function to open the form pop-up
+            function openForm() {
+                document.getElementById('myModal').style.display = 'block';
+            }
+
+            // Function to close the form pop-up
+            function closeForm() {
+                document.getElementById('myModal').style.display = 'none';
+            }
+
+            // Add event listener to the form
+            document.getElementById('dogForm').addEventListener('submit', handleFormSubmit);
+
+            // Function to access camera
+            function accessCamera() {
+                const video = document.getElementById('cameraFeed');
+                if (video) {
+                    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                        .then(stream => {
+                            video.srcObject = stream;
+                            video.play();
+                        })
+                        .catch(error => {
+                            console.error('Error accessing camera:', error);
+                        });
+                } else {
+                    console.error('Video element not found');
+                }
+            }
+
+            // Call accessCamera function when the page loads
+            window.addEventListener('load', accessCamera);
+        </script>
+    </div>
+</body>
+</html>
