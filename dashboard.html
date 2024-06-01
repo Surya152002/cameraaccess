@@ -169,22 +169,38 @@
             checkboxes.forEach((checkbox, index) => {
                 checkbox.addEventListener("change", function() {
                     if (checkbox.checked) {
-                        let selectedValue = checkbox.nextElementSibling.textContent;
-                        sniffedList.push(selectedValue);
-                        unsniffedList = unsniffedList.filter(link => link !== selectedValue);
+                        if (!sniffedList.includes(checkbox.nextElementSibling.textContent)) {
+                            sniffedList.push(checkbox.nextElementSibling.textContent);
+                            unsniffedList = unsniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
+                            localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
+                            checkbox.checked = false; // Uncheck the checkbox after saving
+                        }
+                    } else {
+                        sniffedList = sniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
+                        unsniffedList.push(checkbox.nextElementSibling.textContent);
+                        unsniffedList = shuffleArray(unsniffedList);
                         localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
-                        checkbox.checked = false; // Uncheck the checkbox after saving
-                        updateLists();
-                        updateButtonColors();
                     }
+                    updateLists();
+                    updateButtonColors();
                 });
             });
             
             feedBtn.addEventListener("click", function() {
-                let selectedValue = buttons.find(button => button.textContent === unsniffedList[0]).textContent;
-                sniffedList.push(selectedValue);
-                localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
-                unsniffedList = unsniffedList.filter(link => !sniffedList.includes(link));
+                let nValues = unsniffedList.filter(link => link.startsWith("N"));
+                let pValues = unsniffedList.filter(link => link.startsWith("P"));
+            
+                // Randomly choose 7 "N" values
+                let randomNValues = shuffleArray(nValues).slice(0, 7);
+            
+                // Insert the "P" value randomly into the shuffled list
+                let randomIndex = Math.floor(Math.random() * 8);
+                randomNValues.splice(randomIndex, 0, pValues[0]);
+            
+                buttons.forEach((button, index) => {
+                    button.textContent = randomNValues[index];
+                });
+            
                 updateLists();
                 updateButtonColors();
             });
