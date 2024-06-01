@@ -131,8 +131,9 @@
         
         <script>
             let scannedLinks = JSON.parse(localStorage.getItem("scannedLinks"));
-            let sniffedList = [];
-            let unsniffedList = scannedLinks.slice();
+            let sniffedList = JSON.parse(localStorage.getItem("sniffedList")) || [];
+            let unsniffedList = scannedLinks.filter(link => !sniffedList.includes(link));
+            
             let buttons = document.querySelectorAll(".button");
             let checkboxes = document.querySelectorAll(".checkbox");
             let feedBtn = document.getElementById("feed-btn");
@@ -142,11 +143,11 @@
             function initializeButtonsAndCheckboxes() {
                 let nValues = scannedLinks.filter(link => link.startsWith("N"));
                 let pValues = scannedLinks.filter(link => link.startsWith("P"));
-                
+            
                 // Randomly choose 7 "N" values and 1 "P" value
                 let randomNValues = shuffleArray(nValues).slice(0, 7);
                 let randomPValue = pValues[0];
-                
+            
                 // Set button and checkbox values
                 buttons.forEach((button, index) => {
                     if (index < 7) {
@@ -171,9 +172,13 @@
                         if (!sniffedList.includes(checkbox.nextElementSibling.textContent)) {
                             sniffedList.push(checkbox.nextElementSibling.textContent);
                             unsniffedList = unsniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
+                            localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
                         }
                     } else {
                         sniffedList = sniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
+                        unsniffedList.push(checkbox.nextElementSibling.textContent);
+                        unsniffedList = shuffleArray(unsniffedList);
+                        localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
                     }
                     updateLists();
                     updateButtonColors();
@@ -181,20 +186,20 @@
             });
             
             feedBtn.addEventListener("click", function() {
-                let nValues = scannedLinks.filter(link => link.startsWith("N"));
-                let pValues = scannedLinks.filter(link => link.startsWith("P"));
-                
+                let nValues = unsniffedList.filter(link => link.startsWith("N"));
+                let pValues = unsniffedList.filter(link => link.startsWith("P"));
+            
                 // Randomly choose 7 "N" values
                 let randomNValues = shuffleArray(nValues).slice(0, 7);
-                
+            
                 // Insert the "P" value randomly into the shuffled list
                 let randomIndex = Math.floor(Math.random() * 8);
                 randomNValues.splice(randomIndex, 0, pValues[0]);
-                
+            
                 buttons.forEach((button, index) => {
                     button.textContent = randomNValues[index];
                 });
-                
+            
                 updateLists();
                 updateButtonColors();
             });
@@ -202,13 +207,13 @@
             function updateLists() {
                 sniffedListElement.innerHTML = "";
                 unsniffedListElement.innerHTML = "";
-                
+            
                 sniffedList.forEach((link) => {
                     const linkElement = document.createElement("p");
                     linkElement.textContent = link;
                     sniffedListElement.appendChild(linkElement);
                 });
-                
+            
                 unsniffedList.forEach((link) => {
                     const linkElement = document.createElement("p");
                     linkElement.textContent = link;
