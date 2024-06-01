@@ -130,7 +130,7 @@
         </div>
         
         <script>
-            let scannedLinks = JSON.parse(localStorage.getItem("scannedLinks"));
+           let scannedLinks = JSON.parse(localStorage.getItem("scannedLinks"));
             let sniffedList = JSON.parse(localStorage.getItem("sniffedList")) || [];
             let unsniffedList = scannedLinks.filter(link => !sniffedList.includes(link));
             
@@ -172,13 +172,10 @@
                         if (!sniffedList.includes(checkbox.nextElementSibling.textContent)) {
                             sniffedList.push(checkbox.nextElementSibling.textContent);
                             unsniffedList = unsniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
-                            localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
                         }
                     } else {
                         sniffedList = sniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
                         unsniffedList.push(checkbox.nextElementSibling.textContent);
-                        unsniffedList = shuffleArray(unsniffedList);
-                        localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
                     }
                     updateLists();
                     updateButtonColors();
@@ -202,11 +199,6 @@
             
                 updateLists();
                 updateButtonColors();
-            
-                // Reset checkboxes
-                checkboxes.forEach((checkbox) => {
-                    checkbox.checked = false;
-                });
             });
             
             function updateLists() {
