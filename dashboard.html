@@ -140,14 +140,7 @@ let feedBtn = document.getElementById("feed-btn");
 let sniffedListElement = document.getElementById("sniffed-list");
 let unsniffedListElement = document.getElementById("unsniffed-list");
 
-function initializeButtonsAndCheckboxes() {
-    let nValues = scannedLinks.filter(link => link.startsWith("N"));
-    let pValues = scannedLinks.filter(link => link.startsWith("P"));
-
-    // Randomly choose 7 "N" values and 1 "P" value
-    let randomNValues = shuffleArray(nValues).slice(0, 7);
-    let randomPValue = pValues[0];
-
+function initializeButtonsAndCheckboxes(randomNValues, randomPValue) {
     // Set button and checkbox values
     buttons.forEach((button, index) => {
         if (index < 7) {
@@ -164,7 +157,10 @@ function initializeButtonsAndCheckboxes() {
     });
 }
 
-initializeButtonsAndCheckboxes();
+initializeButtonsAndCheckboxes(
+    shuffleArray(scannedLinks.filter(link => link.startsWith("N"))).slice(0, 7),
+    scannedLinks.filter(link => link.startsWith("P"))[0]
+);
 
 checkboxes.forEach((checkbox, index) => {
     checkbox.addEventListener("change", function() {
@@ -194,9 +190,7 @@ feedBtn.addEventListener("click", function() {
     let randomIndex = Math.floor(Math.random() * 8);
     randomNValues.splice(randomIndex, 0, pValues[0]);
 
-    buttons.forEach((button, index) => {
-        button.textContent = randomNValues[index];
-    });
+    initializeButtonsAndCheckboxes(randomNValues, pValues[0]);
 
     updateLists();
     updateButtonColors();
