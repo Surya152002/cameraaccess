@@ -173,12 +173,14 @@
                             sniffedList.push(checkbox.nextElementSibling.textContent);
                             unsniffedList = unsniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
                             localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
+                            localStorage.setItem("unsniffedList", JSON.stringify(unsniffedList));
                         }
                     } else {
                         sniffedList = sniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
                         unsniffedList.push(checkbox.nextElementSibling.textContent);
                         unsniffedList = shuffleArray(unsniffedList);
                         localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
+                        localStorage.setItem("unsniffedList", JSON.stringify(unsniffedList));
                     }
                     updateLists();
                     updateButtonColors();
