@@ -130,118 +130,122 @@
         </div>
         
         <script>
-        let scannedLinks = JSON.parse(localStorage.getItem("scannedLinks"));
-        let sniffedList = JSON.parse(localStorage.getItem("sniffedList")) || [];
-        let unsniffedList = scannedLinks.filter(link => !sniffedList.includes(link));
-        
-        let buttons = document.querySelectorAll(".button");
-        let checkboxes = document.querySelectorAll(".checkbox");
-        let feedBtn = document.getElementById("feed-btn");
-        let sniffedListElement = document.getElementById("sniffed-list");
-        let unsniffedListElement = document.getElementById("unsniffed-list");
-        
-        function initializeButtonsAndCheckboxes() {
-            let nValues = scannedLinks.filter(link => link.startsWith("N"));
-            let pValues = scannedLinks.filter(link => link.startsWith("P"));
-        
-            // Randomly choose 7 "N" values and 1 "P" value
-            let randomNValues = shuffleArray(nValues).slice(0, 7);
-            let randomPValue = pValues[0];
-        
-            // Set button and checkbox values
-            buttons.forEach((button, index) => {
-                if (index < 7) {
-                    button.textContent = randomNValues[index];
-                    button.id = `button${index + 1}`;
-                    checkboxes[index].id = `checkbox${index + 1}`;
-                    checkboxes[index].nextElementSibling.textContent = randomNValues[index];
-                } else {
-                    button.textContent = randomPValue;
-                    button.id = `button8`;
-                    checkboxes[index].id = `checkbox8`;
-                    checkboxes[index].nextElementSibling.textContent = randomPValue;
-                }
-            });
-        }
-        
-        initializeButtonsAndCheckboxes();
-        
-        checkboxes.forEach((checkbox, index) => {
-            checkbox.addEventListener("change", function() {
-                if (checkbox.checked) {
-                    if (!sniffedList.includes(checkbox.nextElementSibling.textContent)) {
-                        sniffedList.push(checkbox.nextElementSibling.textContent);
-                        unsniffedList = unsniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
-                        localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
-                        checkbox.checked = false; // Uncheck the checkbox after saving
+            let scannedLinks = JSON.parse(localStorage.getItem("scannedLinks"));
+            let sniffedList = JSON.parse(localStorage.getItem("sniffedList")) || [];
+            let unsniffedList = scannedLinks.filter(link => !sniffedList.includes(link));
+            
+            let buttons = document.querySelectorAll(".button");
+            let checkboxes = document.querySelectorAll(".checkbox");
+            let feedBtn = document.getElementById("feed-btn");
+            let sniffedListElement = document.getElementById("sniffed-list");
+            let unsniffedListElement = document.getElementById("unsniffed-list");
+            
+            function initializeButtonsAndCheckboxes() {
+                let nValues = scannedLinks.filter(link => link.startsWith("N"));
+                let pValues = scannedLinks.filter(link => link.startsWith("P"));
+            
+                // Randomly choose 7 "N" values and 1 "P" value
+                let randomNValues = shuffleArray(nValues).slice(0, 7);
+                let randomPValue = pValues[0];
+            
+                // Set button and checkbox values
+                buttons.forEach((button, index) => {
+                    if (index < 7) {
+                        button.textContent = randomNValues[index];
+                        button.id = `button${index + 1}`;
+                        checkboxes[index].id = `checkbox${index + 1}`;
+                        checkboxes[index].nextElementSibling.textContent = randomNValues[index];
+                    } else {
+                        button.textContent = randomPValue;
+                        button.id = `button8`;
+                        checkboxes[index].id = `checkbox8`;
+                        checkboxes[index].nextElementSibling.textContent = randomPValue;
                     }
-                } else {
-                    sniffedList = sniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
-                    unsniffedList.push(checkbox.nextElementSibling.textContent);
-                    unsniffedList = shuffleArray(unsniffedList);
-                    localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
-                }
+                });
+            }
+            
+            initializeButtonsAndCheckboxes();
+            
+            checkboxes.forEach((checkbox, index) => {
+                checkbox.addEventListener("change", function() {
+                    if (checkbox.checked) {
+                        if (!sniffedList.includes(checkbox.nextElementSibling.textContent)) {
+                            sniffedList.push(checkbox.nextElementSibling.textContent);
+                            unsniffedList = unsniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
+                            localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
+                        }
+                    } else {
+                        sniffedList = sniffedList.filter(link => link !== checkbox.nextElementSibling.textContent);
+                        unsniffedList.push(checkbox.nextElementSibling.textContent);
+                        unsniffedList = shuffleArray(unsniffedList);
+                        localStorage.setItem("sniffedList", JSON.stringify(sniffedList));
+                    }
+                    updateLists();
+                    updateButtonColors();
+                });
+            });
+            
+            feedBtn.addEventListener("click", function() {
+                let nValues = unsniffedList.filter(link => link.startsWith("N"));
+                let pValues = unsniffedList.filter(link => link.startsWith("P"));
+            
+                // Randomly choose 7 "N" values
+                let randomNValues = shuffleArray(nValues).slice(0, 7);
+            
+                // Insert the "P" value randomly into the shuffled list
+                let randomIndex = Math.floor(Math.random() * 8);
+                randomNValues.splice(randomIndex, 0, pValues[0]);
+            
+                buttons.forEach((button, index) => {
+                    button.textContent = randomNValues[index];
+                });
+            
                 updateLists();
                 updateButtonColors();
+            
+                // Reset checkboxes
+                checkboxes.forEach((checkbox) => {
+                    checkbox.checked = false;
+                });
             });
-        });
-        
-        feedBtn.addEventListener("click", function() {
-            let nValues = unsniffedList.filter(link => link.startsWith("N"));
-            let pValues = unsniffedList.filter(link => link.startsWith("P"));
-        
-            // Randomly choose 7 "N" values
-            let randomNValues = shuffleArray(nValues).slice(0, 7);
-        
-            // Insert the "P" value randomly into the shuffled list
-            let randomIndex = Math.floor(Math.random() * 8);
-            randomNValues.splice(randomIndex, 0, pValues[0]);
-        
-            buttons.forEach((button, index) => {
-                button.textContent = randomNValues[index];
-            });
-        
-            updateLists();
-            updateButtonColors();
-        });
-        
-        function updateLists() {
-            sniffedListElement.innerHTML = "";
-            unsniffedListElement.innerHTML = "";
-        
-            sniffedList.forEach((link) => {
-                const linkElement = document.createElement("p");
-                linkElement.textContent = link;
-                sniffedListElement.appendChild(linkElement);
-            });
-        
-            unsniffedList.forEach((link) => {
-                const linkElement = document.createElement("p");
-                linkElement.textContent = link;
-                unsniffedListElement.appendChild(linkElement);
-            });
-        }
-        
-        function updateButtonColors() {
-            buttons.forEach((button, index) => {
-                if (sniffedList.includes(button.textContent)) {
-                    if (button.textContent.startsWith("N")) {
-                        button.classList.add("button-green");
-                        button.classList.remove("button-red");
+            
+            function updateLists() {
+                sniffedListElement.innerHTML = "";
+                unsniffedListElement.innerHTML = "";
+            
+                sniffedList.forEach((link) => {
+                    const linkElement = document.createElement("p");
+                    linkElement.textContent = link;
+                    sniffedListElement.appendChild(linkElement);
+                });
+            
+                unsniffedList.forEach((link) => {
+                    const linkElement = document.createElement("p");
+                    linkElement.textContent = link;
+                    unsniffedListElement.appendChild(linkElement);
+                });
+            }
+            
+            function updateButtonColors() {
+                buttons.forEach((button, index) => {
+                    if (sniffedList.includes(button.textContent)) {
+                        if (button.textContent.startsWith("N")) {
+                            button.classList.add("button-green");
+                            button.classList.remove("button-red");
+                        } else {
+                            button.classList.add("button-red");
+                            button.classList.remove("button-green");
+                        }
                     } else {
-                        button.classList.add("button-red");
                         button.classList.remove("button-green");
+                        button.classList.remove("button-red");
                     }
-                } else {
-                    button.classList.remove("button-green");
-                    button.classList.remove("button-red");
-                }
-            });
-        }
-        
-        function shuffleArray(array) {
-            return array.sort(() => Math.random() - 0.5);
-        }
+                });
+            }
+            
+            function shuffleArray(array) {
+                return array.sort(() => Math.random() - 0.5);
+            }
         </script>
     </div>
 </body>
